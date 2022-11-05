@@ -1,0 +1,6 @@
+total: 19.5h
+sleep: 1h
+pingpong: 2.5h
+primes: 7.5h
+find: 3h
+xargs: 5.5h
