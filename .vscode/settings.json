@@ -3,6 +3,10 @@
         "cmath": "c",
         "type_traits": "c",
         "limits": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "param.h": "c",
+        "fs.h": "c",
+        "user.h": "c",
+        "types.h": "c"
     }
 }
