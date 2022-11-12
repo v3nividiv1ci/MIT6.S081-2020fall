@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include "sysinfo.h"
 
 uint64
 sys_exit(void)
@@ -94,4 +95,33 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+uint64
+sys_trace(void)
+{
+  // 把需要追踪的系统调用存在proc里面
+  struct proc *p = myproc();
+  // printf("%d: %s -> %d\n", p->pid, p->name, p->trapframe->a0);
+  p->trace = p->trapframe->a0;
+  return 0;
+}
+
+uint64 procnumber(void);
+uint64 kcollect(void);
+
+uint64 
+sys_sysinfo(void)
+{
+  // freemem设置为空闲内存的字节数
+  // nproc设置为state字段不为unused的进程数
+  struct proc *p = myproc();
+  struct sysinfo info;
+  info.nproc = procnumber();
+  info.freemem = kcollect();
+  // info.freemem = sys_sbrk();
+  uint64 addr;
+  if((argaddr(0, &addr)) < 0 || copyout(p->pagetable, addr, (char *)&info, sizeof(info)) < 0) 
+    return -1;
+  return addr;
 }

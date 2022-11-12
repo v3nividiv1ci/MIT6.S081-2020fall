@@ -16,6 +16,7 @@ int nextpid = 1;
 struct spinlock pid_lock;
 
 extern void forkret(void);
+extern uint64 procnumber(void);
 static void wakeup1(struct proc *chan);
 static void freeproc(struct proc *p);
 
@@ -294,6 +295,9 @@ fork(void)
   pid = np->pid;
 
   np->state = RUNNABLE;
+
+  // copy system call tracing
+  np->trace = p->trace;
 
   release(&np->lock);
 
@@ -692,4 +696,19 @@ procdump(void)
     printf("%d %s %s", p->pid, state, p->name);
     printf("\n");
   }
+}
+
+// Collect the number of processes
+uint64
+procnumber(void)
+{
+  uint64 number = 0;
+  struct proc *p;
+  for (p = proc; p < &proc[NPROC]; p++) {
+    if(p->state == UNUSED)
+      continue;
+    else  
+      number ++;
+  }
+  return number;
 }
